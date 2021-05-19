@@ -2,10 +2,10 @@ local tArgs = {...}
 
 local function printUsage()
 	print("Usage:")
-	print(fs.getName(shell.getRunningProgram()).." <word_length> <difficulty> <can_terminate> <script_path> <password>")
+	print(fs.getName(shell.getRunningProgram()).." <difficulty> <can_terminate> <script_path> <password>")
 end
 
-local wordLength = tonumber(tArgs[1])
+local wordLength = 4
 if not wordLength or wordLength < 4 then
 	printError("wordLength must be a number greater than 3")
 	printUsage()
@@ -27,8 +27,12 @@ local canTerminate = tArgs[3] == "true"
 local successScriptPath = tArgs[4]
 
 local password
-if type(tArgs[5]) == "string" and string.len(tArgs[5]) == wordLength then
-	password = string.upper(tArgs[5])
+if type(tArgs[5]) == "string" then
+	if string.len(tArgs[5]) == wordLength then
+		password = string.upper(tArgs[5])
+	else 
+		printError("password must be 4 characters long")
+	end
 end
 
 local clickCatcher
@@ -218,13 +222,14 @@ local function buildInternalMap(internalMapString, clickableMap)
 	return internalMap
 end
 
+wor
+
 local function fetchWordList(wordLength, amount)
-	local url = "http://www.mieliestronk.com/corncob_caps.txt"
+	local url = "https://pastebin.com/raw/dvXe4fHm"
 	for i = 1, amount do
 		http.request(url)
 	end
 	local wordList = {}
-	local finalList = {}
 	local timer = os.startTimer(1)
 	local event
 	while true do
@@ -235,12 +240,7 @@ local function fetchWordList(wordLength, amount)
 			table.insert(wordList, event[3].readAll():upper())
 		end
 	end
-	for _, word in pairs(wordList) do
-		if length(word) == wordLength then
-			finalList[#finalList + 1] = word
-		end
-	end
-	return finalList
+	return wordList
 end
 
 local function compareStrings(string1, string2)
@@ -499,11 +499,11 @@ local function selectClickable(cursorX, cursorY, wordLength, attempts)
 				if wordData then
 					wordData[REMOVED] = true
 					wordData[WORD] = string.rep(".", wordData[END_POS] - wordData[START_POS] + 1)
-				end
-				for pos = wordData[START_POS], wordData[END_POS] do
-					local wordPos = map[pos]
-					wordPos[CHAR] = "."
-					draw(hackerWindow, wordPos[X_POS], wordPos[Y_POS], colours.black, terminalColour, ".")
+					for pos = wordData[START_POS], wordData[END_POS] do
+						local wordPos = map[pos]
+						wordPos[CHAR] = "."
+						draw(hackerWindow, wordPos[X_POS], wordPos[Y_POS], colours.black, terminalColour, ".")
+					end
 				end
 			elseif clickableData[HACK_TYPE] == "RESET" then
 				drawOutput("Tries reset.", true)
