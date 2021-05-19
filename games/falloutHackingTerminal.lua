@@ -16,7 +16,7 @@ local successScriptPath = tArgs[1]
 
 local password
 if type(tArgs[2]) == "string" then
-	if string.len(tArgs[5]) == wordLength then
+	if string.len(tArgs[2]) == wordLength then
 		password = string.upper(tArgs[5])
 	else 
 		printError("password must be 4 characters long")
