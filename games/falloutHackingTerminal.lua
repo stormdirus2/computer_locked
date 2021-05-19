@@ -219,11 +219,12 @@ local function buildInternalMap(internalMapString, clickableMap)
 end
 
 local function fetchWordList(wordLength, amount)
-	local url = "http://www.setgetgo.com/randomword/get.php?len="..tostring(wordLength)
+	local url = "http://www.mieliestronk.com/corncob_caps.txt"
 	for i = 1, amount do
 		http.request(url)
 	end
 	local wordList = {}
+	local finalList = {}
 	local timer = os.startTimer(1)
 	local event
 	while true do
@@ -234,7 +235,12 @@ local function fetchWordList(wordLength, amount)
 			table.insert(wordList, event[3].readAll():upper())
 		end
 	end
-	return wordList
+	for _, word in pairs(wordList) do
+		if length(word) == wordLength then
+			finalList[#finalList + 1] = word
+		end
+	end
+	return finalList
 end
 
 local function compareStrings(string1, string2)
