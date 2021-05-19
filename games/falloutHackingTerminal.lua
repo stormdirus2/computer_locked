@@ -529,7 +529,7 @@ end
 
 local function drawHeader()
 	local prevTerm = term.redirect(headerWindow)
-	textutils.slowPrint("ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL", 20)
+	textutils.slowPrint("INSTITUTE OF MOLECULAR UNDERSTANDING OF MAGIC", 20)
 	textutils.slowPrint("ENTER PASSWORD NOW", 20)
 	term.redirect(prevTerm)
 	headerWindow.setCursorPos(3, 4)
@@ -592,12 +592,8 @@ else
 	term.scroll(1)
 	term.setCursorPos(1, height)
 	textutils.slowWrite("> PLEASE CONTACT AN ADMINISTRATOR.")
-	while true do
-		local event = os.pullEventRaw()
-		if event == "terminate" and canTerminate then
-			break
-		end
-	end
+	sleep(3)
+	shell.run(shell.getRunningProgram(), tArgs)
 end
 
 term.setBackgroundColour(colours.black)
