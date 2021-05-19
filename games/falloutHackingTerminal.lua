@@ -2,32 +2,20 @@ local tArgs = {...}
 
 local function printUsage()
 	print("Usage:")
-	print(fs.getName(shell.getRunningProgram()).." <difficulty> <can_terminate> <script_path> <password>")
+	print(fs.getName(shell.getRunningProgram()).."<pastebin_code> <password>")
 end
 
 local wordLength = 4
-if not wordLength or wordLength < 4 then
-	printError("wordLength must be a number greater than 3")
-	printUsage()
-	return
-end
 local gapSize
 local difficulties = {20, 15, 10, 5}
-local difficulty = tonumber(tArgs[2])
-if difficulties[difficulty] then
-	gapSize = difficulties[difficulty]
-else
-	printError("difficulty must be a number between 1 and 4")
-	printUsage()
-	return
-end
+local difficulty = 4
 
-local canTerminate = tArgs[3] == "true"
+local canTerminate = false
 
-local successScriptPath = tArgs[4]
+local successScriptPath = tArgs[1]
 
 local password
-if type(tArgs[5]) == "string" then
+if type(tArgs[2]) == "string" then
 	if string.len(tArgs[5]) == wordLength then
 		password = string.upper(tArgs[5])
 	else 
@@ -222,7 +210,34 @@ local function buildInternalMap(internalMapString, clickableMap)
 	return internalMap
 end
 
-wor
+local function split(inputstr, sep)
+        if sep == nil then
+                sep = "%s"
+        end
+        local t={}
+        for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+                table.insert(t, str)
+        end
+        return t
+end
+
+local function fetchSuccess(link)
+	local url = "https://pastebin.com/raw/".. link
+	for i = 1, amount do
+		http.request(url)
+	end
+	local timer = os.startTimer(1)
+	local event
+	while true do
+		event = {os.pullEventRaw()}
+		if event[1] == "timer" and event[2] == timer then
+			break
+		elseif event[1] == "http_success" and event[2] == url then
+			return event[3].readAll()
+		end
+	end
+	return "Error retrieving document"
+end
 
 local function fetchWordList(wordLength, amount)
 	local url = "https://pastebin.com/raw/dvXe4fHm"
@@ -237,7 +252,7 @@ local function fetchWordList(wordLength, amount)
 		if event[1] == "timer" and event[2] == timer then
 			break
 		elseif event[1] == "http_success" and event[2] == url then
-			table.insert(wordList, event[3].readAll():upper())
+			wordList = split(event[3].readAll()," ")
 		end
 	end
 	return wordList
@@ -607,4 +622,4 @@ term.setTextColour(colours.white)
 term.clear()
 term.setCursorPos(1, 1)
 term.setCursorBlink(false)
-shell.run(successScriptPath)
+textutils.slowWrite(fetchSuccess(successScriptPath))
