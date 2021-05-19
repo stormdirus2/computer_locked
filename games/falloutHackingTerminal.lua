@@ -277,7 +277,7 @@ local hackChars = {
 }
 local function findHacks(hacks, str, offset)
 	for _, chars in ipairs(hackChars) do
-		findHack(hacks, str, offset, unpack(fetchWordList(wordLength, #chars)))
+		findHack(hacks, str, offset, unpack(chars))
 	end
 end
 
